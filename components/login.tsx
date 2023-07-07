@@ -1,12 +1,46 @@
+import { useEffect } from "react"
+import { useRouter } from "next/router"
+import { useEditable } from "@chakra-ui/react"
 import { signIn, signOut, useSession } from "next-auth/react"
 // import Layout from "../components/layout"
 
+import dbConnect from "../lib/mongooseConnect"
+import User from "../models/User"
+
 const Login = () => {
+  const router = useRouter()
+
   const { data: session, status } = useSession()
   const loading = status === "loading"
 
-  console.log(session)
-  console.log(status)
+  const isUser = async () => {
+    console.log(session)
+    console.log(session?.user)
+    console.log(session?.account)
+    console.log(status)
+    try {
+      const response = await fetch("/api/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: session?.user?.email }),
+      })
+
+      console.log(response)
+      router.push("/user/signup")
+    } catch (error) {
+      console.error("Error:", error)
+    }
+  }
+
+  useEffect(() => {
+    const authenticated = status === "authenticated"
+
+    if (authenticated) {
+      isUser()
+    }
+  }, [status])
 
   return (
     <>
@@ -24,6 +58,8 @@ const Login = () => {
                 }}
               >
                 Google Sign in
+                <br />
+                {status} by {session?.user.email}
               </a>
             </li>
           </ul>
@@ -39,6 +75,9 @@ const Login = () => {
             }}
           >
             Sign out
+            <br />
+            {status} by {session?.user.email}
+            {session?.account?.provider}
           </a>
         )}
       </div>

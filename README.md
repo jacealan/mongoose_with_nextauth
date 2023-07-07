@@ -1,14 +1,49 @@
 # Google, Naver, Kakao login by NextAuth with MongoDB
 
-NextAuth를 이용한 구글로그인, 네이버로그인, 카카오로그인
+1. NextAuth를 이용한 구글로그인, 네이버로그인, 카카오로그인
+2. User의 정보는 MongoDB(mongoose)를 이용해 추가정보와 함께 관리
+
+```mermaid
+flowchart TB
+  subgraph login ["//index.tsx"]
+    btnLogin(/components/login.tsx)
+    nextauth
+    authenticated
+
+    btnLogin --login--> nextauth
+    nextauth --> authenticated
+    authenticated --> btnLogin
+  end
+  subgraph isNew ["if newUser"]
+     POST://api/user
+  end
+  subgraph signup ["//user/signup.tsx"]
+    Users --> post_signup("POST://api/user/signup")
+  end
+  subgraph start ["start page"]
+    page1
+    page2
+    page3
+  end
+  authenticated --> isNew
+  isNew -- "new user" --> signup
+  isNew -- "existing user" --> start
+  signup --> start
+```
 
 ## 추가, 수정된 파일
 
-- /components/login.tsx
-- /lib/mongodb.tsx
-- /pages/api/auth/[...nextauth].tsx
-- /pages/\_app.tsx
-- /pages/index.tsx
+1. NextAuth를 이용한 구글로그인, 네이버로그인, 카카오로그인
+
+   - /components/login.tsx
+   - /lib/mongodb.tsx
+   - /pages/api/auth/[...nextauth].tsx
+   - /pages/\_app.tsx
+   - /pages/index.tsx
+
+2. User의 정보는 MongoDB(mongoose)를 이용해 추가정보와 함께 관리
+
+- ㅁㅇㄴ
 
 ## .env
 

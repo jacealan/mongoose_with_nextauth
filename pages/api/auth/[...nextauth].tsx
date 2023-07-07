@@ -48,6 +48,8 @@ export const authOptions: any = {
   callbacks: {
     async signIn({ account, profile }: { account: any; profile: any }) {
       if (account.provider === "google") {
+        console.log(account)
+        console.log(profile.email_verified)
         return profile.email_verified // && profile.email.endsWith("@example.com")
       }
       return true // Do different verification for other providers that don't have `email_verified`
@@ -58,12 +60,12 @@ export const authOptions: any = {
   },
   adapter: MongoDBAdapter(clientPromise, {
     collections: {
-      Users: process.env.DATABASE_COLLECTION_NAUSERS ?? "Users",
-      Accounts: process.env.DATABASE_COLLECTION_NAACCOUNTS ?? "Accounts",
-      Sessions: process.env.DATABASE_COLLECTION_NASESSIONS ?? "Sessions",
+      Users: process.env.DATABASE_COLLECTION_NAUSERS ?? "naUsers",
+      Accounts: process.env.DATABASE_COLLECTION_NAACCOUNTS ?? "naAccounts",
+      Sessions: process.env.DATABASE_COLLECTION_NASESSIONS ?? "naSessions",
       VerificationTokens:
         process.env.DATABASE_COLLECTION_NAVERIFICATIONTOKENS ??
-        "VerificationTokens",
+        "naVerificationTokens",
     },
     databaseName: process.env.DATABASE_DB,
   }),
