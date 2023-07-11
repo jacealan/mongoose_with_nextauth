@@ -16,19 +16,35 @@ const Login = () => {
   const isUser = async () => {
     console.log(session)
     console.log(session?.user)
-    console.log(session?.account)
     console.log(status)
     try {
-      const response = await fetch("/api/user", {
+      const response = await fetch("/api/user/ismember", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email: session?.user?.email }),
       })
+      const responseData = await response.json()
+      // console.log(response)
+      // console.log(await responseData)
 
-      console.log(response)
-      router.push("/user/signup")
+      if (responseData.success) {
+        const response = await fetch("/api/user", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: session?.user?.email,
+            id_token: session?.id_token,
+          }),
+        })
+        console.log(response)
+        router.push("/")
+      } else {
+        router.push("/user/signup")
+      }
     } catch (error) {
       console.error("Error:", error)
     }
@@ -39,6 +55,8 @@ const Login = () => {
 
     if (authenticated) {
       isUser()
+    } else {
+      router.push("/")
     }
   }, [status])
 
@@ -47,22 +65,16 @@ const Login = () => {
       {/* <Layout headerOption={{ title: "로그인" }}> */}
       <div>
         {!session && (
-          <ul>
-            <li>
-              <a
-                href={"/api/auth/signin"}
-                onClick={(e) => {
-                  e.preventDefault()
-                  // signIn("google")
-                  signIn()
-                }}
-              >
-                Google Sign in
-                <br />
-                {status} by {session?.user.email}
-              </a>
-            </li>
-          </ul>
+          <a
+            href={"/api/auth/signin"}
+            onClick={(e) => {
+              e.preventDefault()
+              // signIn("google")
+              signIn()
+            }}
+          >
+            {status} | <b>Sign in</b>
+          </a>
         )}
       </div>
       <div>
@@ -74,10 +86,7 @@ const Login = () => {
               signOut()
             }}
           >
-            Sign out
-            <br />
-            {status} by {session?.user.email}
-            {session?.account?.provider}
+            {status} by {session?.user.email} | <b>Sign out</b>
           </a>
         )}
       </div>

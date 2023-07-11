@@ -21,6 +21,7 @@ flowchart TB
     Users --> post_signup("POST://api/user/signup")
   end
   subgraph start ["start page"]
+    direction LR
     page1
     page2
     page3
@@ -73,3 +74,4 @@ GOOGLE_SECRET=<google secret>
 https://next-auth.js.org/getting-started/example
 https://blog.teamelysium.kr/nextjs-auth
 https://cpro95.tistory.com/521
+https://stackoverflow.com/questions/73606906/next-auth-how-to-get-google-id-token

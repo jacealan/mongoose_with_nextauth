@@ -7,7 +7,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <h1>Next-Auth Test</h1>
-      <Login />
+      {/* <Login /> */}
     </div>
   )
 }
