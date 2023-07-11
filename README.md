@@ -4,32 +4,42 @@
 2. User의 정보는 MongoDB(mongoose)를 이용해 추가정보와 함께 관리
 
 ```mermaid
-flowchart TB
-  subgraph login ["//index.tsx"]
-    btnLogin(/components/login.tsx)
-    nextauth
-    authenticated
+sequenceDiagram
+  participant Front
+  participant API
+  participant UsersDB
+  participant TeamsDB
+  participant ConfirmsDB
 
-    btnLogin --login--> nextauth
-    nextauth --> authenticated
-    authenticated --> btnLogin
+  Note over Front, API: LogIn
+  Front ->> API: Next-Auth
+  API ->> Front: Google Login
+
+  Front ->> API: POST: isMember
+  API -->> UsersDB: findOne
+  alt not found
+  UsersDB -->> API: no
+
+  Note over Front, API: SignUp
+  Front ->> API: POST: User Info
+  API -->> UsersDB: createOne
+  API -->> ConfirmsDB: createOne
+
+  Note over Front,TeamsDB: Relate user with team
+  Front ->> API: POST:isthereConfirm
+  API -->> ConfirmsDB: find
+  ConfirmsDB -->> API: yes
+  Front ->> API: PUT: user-team
+  API -->> UsersDB: findOne & Update
+  API -->> TeamsDB: findOne & Update
+  API -->> ConfirmsDB: findOne & Update
   end
-  subgraph isNew ["if newUser"]
-     POST://api/user
-  end
-  subgraph signup ["//user/signup.tsx"]
-    Users --> post_signup("POST://api/user/signup")
-  end
-  subgraph start ["start page"]
-    direction LR
-    page1
-    page2
-    page3
-  end
-  authenticated --> isNew
-  isNew -- "new user" --> signup
-  isNew -- "existing user" --> start
-  signup --> start
+
+  Note over Front, API: ROOT
+
+
+
+
 ```
 
 ## 추가, 수정된 파일
