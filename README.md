@@ -85,3 +85,4 @@ https://next-auth.js.org/getting-started/example
 https://blog.teamelysium.kr/nextjs-auth
 https://cpro95.tistory.com/521
 https://stackoverflow.com/questions/73606906/next-auth-how-to-get-google-id-token
+https://thinkforthink.tistory.com/208

@@ -1,13 +1,9 @@
 import mongoose from "mongoose"
 const { Schema } = mongoose
+import naUser from "./naUser"
 
-/* PetSchema will correspond to a collection in your MongoDB database. */
 const UserSchema = new mongoose.Schema(
   {
-    // naUsers: {
-    //   type: Schema.Types.ObjectId,
-    //   required: [true],
-    // },
     name: {
       type: String,
       required: [true, "Please provide a name for this pet."],
@@ -25,12 +21,13 @@ const UserSchema = new mongoose.Schema(
     },
     provider: {
       type: String,
+      required: true,
     },
     id_token: {
       type: String,
+      required: true,
     },
-
-    // workBranches: [{ type: Schema.Types.ObjectId }],
+    naUser: { type: Schema.Types.ObjectId, ref: "naUser", required: true },
   },
   { versionKey: false, timestamps: true }
 )

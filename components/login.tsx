@@ -7,16 +7,23 @@ import { signIn, signOut, useSession } from "next-auth/react"
 import dbConnect from "../lib/mongooseConnect"
 import User from "../models/User"
 
+import NextAuth, { DefaultSession } from "next-auth"
+
 const Login = () => {
   const router = useRouter()
 
   const { data: session, status } = useSession()
   const loading = status === "loading"
+  // let sessionModified = session as typeof session & {
+  //   id_token: string
+  // }
 
   const isUser = async () => {
     console.log(session)
     console.log(session?.user)
     console.log(status)
+    // console.log(sessionModified)
+
     try {
       const response = await fetch("/api/user/ismember", {
         method: "POST",
@@ -37,10 +44,11 @@ const Login = () => {
           },
           body: JSON.stringify({
             email: session?.user?.email,
-            id_token: session?.id_token,
+            id_token: session?.user?.id_token,
+            // id_token: sessionModified?.id_token,
           }),
         })
-        console.log(response)
+        // console.log(response)
         router.push("/")
       } else {
         router.push("/user/signup")

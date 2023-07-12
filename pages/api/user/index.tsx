@@ -1,6 +1,7 @@
 import { userAgent } from "next/server"
 import dbConnect from "../../../lib/mongooseConnect"
 import User from "../../../models/User"
+import naUser from "../../../models/naUser"
 
 export default async function handler(req: any, res: any) {
   const {
@@ -12,15 +13,18 @@ export default async function handler(req: any, res: any) {
   await dbConnect()
 
   switch (method) {
-    case "POST" /* Get a model by its ID */:
+    case "POST" /* SIGNUP */:
       try {
         // console.log(email, name, phone, intraPhone, provider)
         const isMember = await User.findOne({ email: email })
+        // console.log(isMember._id.toString())
         if (isMember) {
           console.log(`there is ${email}`)
           return res.status(400).json({ success: false })
         }
 
+        const nauser = await naUser.findOne({ email: email })
+        console.log(nauser)
         let user = new User({
           email,
           name,
@@ -28,8 +32,9 @@ export default async function handler(req: any, res: any) {
           intraPhone,
           provider,
           id_token,
+          naUser: nauser._id,
         })
-        user.save().then(() => console.log(`Saved ${email}`))
+        user.save().then(() => console.log(`Saved ${email} `))
 
         if (user) {
           return res.status(200).json({ success: true, data: user })

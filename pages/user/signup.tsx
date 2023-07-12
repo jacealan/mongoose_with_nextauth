@@ -26,16 +26,34 @@ import { useEditable } from "@chakra-ui/react"
 import Head from "next/head"
 import Login from "@/components/login"
 
-type SignUpInputs = {
-  email: string
-  name: string
-  phone: string
-  intraPhone: string
-}
+type SignUpData =
+  | {
+      email: string
+      name: string
+      phone: string
+      intraPhone: string
+      provider: string
+      id_token: string
+    }
+  | null
+  | undefined
+type SignUpInputs =
+  | {
+      email: string
+      name: string
+      phone: string
+      intraPhone: string
+    }
+  | null
+  | undefined
 
 const SignUp: NextPage = () => {
   const router = useRouter()
   const { data: session, status } = useSession()
+  let sessionModified = session as typeof session & {
+    provider: string
+    id_token: string
+  }
 
   // // example of react-hook-form
   // const {
@@ -52,9 +70,13 @@ const SignUp: NextPage = () => {
     formState: { errors, isSubmitting },
   } = useForm()
 
-  async function onSubmit(values: any) {
-    values.provider = session?.provider
-    values.id_token = session?.id_token
+  async function onSubmit(formData: any) {
+    const values: SignUpData = formData
+    // values = {...data}
+    values!.provider = session?.user?.provider ?? ""
+    values!.id_token = session?.user?.id_token ?? ""
+    // values.provider = sessionModified?.provider
+    // values.id_token = sessionModified?.id_token
     console.log(values)
     console.log(session)
 
@@ -66,6 +88,12 @@ const SignUp: NextPage = () => {
       body: JSON.stringify(values),
     })
     console.log(response)
+
+    if (response.status) {
+      router.push("/")
+    } else {
+      console.log("ERROR: signup")
+    }
     // return new Promise((resolve) => {
     //   setTimeout(() => {
     //     alert(JSON.stringify(values, null, 2))
@@ -98,13 +126,18 @@ const SignUp: NextPage = () => {
       </form> */}
 
         <Stack direction={"row"} spacing={4}>
-          <Image src={session?.user?.image ?? ""} w="96px" h="96px" />
+          <Image
+            src={session?.user?.image ?? ""}
+            alt={session?.user?.email ?? ""}
+            w="96px"
+            h="96px"
+          />
+          {/* <form onSubmit={handleSubmit(() => onSubmit(session?.user))}> */}
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4}>
               <FormControl isInvalid={Boolean(errors.name)} isReadOnly>
-                {/* <FormLabel htmlFor="email">Email</FormLabel> */}
                 <InputGroup>
-                  <InputLeftAddon children="Email" />
+                  <InputLeftAddon>Email</InputLeftAddon>
                   <Input
                     id="email"
                     placeholder="email"
@@ -126,7 +159,7 @@ const SignUp: NextPage = () => {
 
               <FormControl isInvalid={Boolean(errors.name)} isRequired>
                 <InputGroup>
-                  <InputLeftAddon children="이름" />
+                  <InputLeftAddon>이름</InputLeftAddon>
                   <Input
                     id="name"
                     placeholder="이름"
@@ -151,7 +184,7 @@ const SignUp: NextPage = () => {
 
               <FormControl isInvalid={Boolean(errors.phone)} isRequired>
                 <InputGroup>
-                  <InputLeftAddon children="핸드폰" />
+                  <InputLeftAddon>핸드폰</InputLeftAddon>
                   <Input
                     id="phone"
                     placeholder="010-1234-5678"
@@ -173,9 +206,9 @@ const SignUp: NextPage = () => {
                 </FormErrorMessage>
               </FormControl>
 
-              <FormControl isInvalid={Boolean(errors.phone)} isRequired>
+              <FormControl isInvalid={Boolean(errors.intraPhone)} isRequired>
                 <InputGroup>
-                  <InputLeftAddon children="내선번호" />
+                  <InputLeftAddon>내선번호</InputLeftAddon>
                   <Input
                     id="intraPhone"
                     placeholder="1234"

@@ -72,8 +72,8 @@ export const authOptions: any = {
     },
     async session({ session, token }: { session: any; token: any }) {
       // Send properties to the client, like an access_token from a provider.
-      session.id_token = token.id_token
-      session.provider = "google"
+      session.user.id_token = token.id_token
+      session.user.provider = "google"
       // session.userId = JSON.stringify(token._id)
       return session
     },
